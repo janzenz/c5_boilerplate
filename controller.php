@@ -359,41 +359,35 @@ class C5BoilerplatePackage extends Package {
 	}
 
 	private function installSinglePages($pkg) {
+		// This contains the installable dashboard pages.
+		$dashboardPages = array(
+			'/dashboard/boilerplate' => t('Boilerplate'),
+			'/dashboard/boilerplate/output_stuff' => t('Output Stuff'),
+		);
 
-		//this array will hold all the custom dashboard page paths and their icons. 
+		//this array will hold all the custom dashboard page paths and their icons.
 		//see the setupDashboardIcons method for more info
-		$dashboardIcons = array();
-
-		$path = '/dashboard/boilerplate';
-
-		$cID = Page::getByPath($path)->getCollectionID();
-		if (intval($cID) > 0 && $cID !== 1) {
-			// the single page already exists, so we want
-			// to update it to use our package elements
-			// this might not be OK for marketplace stuff if
-			// you are modifying the core single pages
-			Loader::db()->execute('update Pages set pkgID = ? where cID = ?', array($pkg->pkgID, $cID));
-		} else {
-			// it doesn't exist, so now we add it
-			$p = SinglePage::add($path, $pkg);
-			if (is_object($p) && $p->isError() !== false) {
-				$p->update(array('cName' => t('Boilerplate')));
-			}
-		}
-
-		$path = '/dashboard/boilerplate/output_stuff';
-		$cID = Page::getByPath($path)->getCollectionID();
-		if (intval($cID) > 0 && $cID !== 1) {
-			Loader::db()->execute('update Pages set pkgID = ? where cID = ?', array($pkg->pkgID, $cID));
-		} else {
-			$p = SinglePage::add($path, $pkg);
-			if (is_object($p) && $p->isError() !== false) {
-				$p->update(array('cName' => t('Output Stuff')));
-			}
-		}
-		// Set the icon for the /dashboard/boilerplate/output_stuff page.
 		// See the icons section of the twitter bootstrap docs for available icons.
-		$dashboardIcons[$path] = 'icon-bullhorn';
+		$dashboardIcons = array(
+			'/dashboard/content_replace' => 'icon-bullhorn',
+		);
+
+		foreach	( $dashboardPages as $path => $title ) {
+			$cID = Page::getByPath($path)->getCollectionID();
+			if (intval($cID) > 0 && $cID !== 1) {
+				// the single page already exists, so we want
+				// to update it to use our package elements
+				// this might not be OK for marketplace stuff if
+				// you are modifying the core single pages
+				Loader::db()->execute('update Pages set pkgID = ? where cID = ?', array($pkg->pkgID, $cID));
+			} else {
+				// it doesn't exist, so now we add it
+				$p = SinglePage::add($path, $pkg);
+				if (is_object($p) && $p->isError() !== false) {
+					$p->update(array('cName' => $title));
+				}
+			}
+		}
 
 		//setup the icons set for custom dashboard single pages
 		$this->setupDashboardIcons($dashboardIcons);
