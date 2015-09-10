@@ -8,7 +8,7 @@ class DashboardBoilerplateController extends Controller {
 	// otherwise, it would show boilerplate as the title, then "home" as the
 	// link underneath that. redirecting gives more control
 	public function view() {
-		$this->redirect('/dashboard/boilerplate/boilerplate_sub');
+		$this->redirect('/dashboard/boilerplate/output_stuff');
 	}
 
 }
